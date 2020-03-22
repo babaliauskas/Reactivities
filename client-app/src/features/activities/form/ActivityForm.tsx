@@ -75,7 +75,7 @@ const ActivityForm: React.FC<IProps> = ({
           onChange={handleInputChange}
         />
         <Form.Input
-          type='date'
+          type='datetime-local'
           placeholder='Date'
           name='date'
           value={activity.date}
