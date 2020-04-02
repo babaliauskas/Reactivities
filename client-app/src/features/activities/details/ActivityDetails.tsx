@@ -1,30 +1,37 @@
-import React, { useContext, useEffect } from 'react';
-import { Grid } from 'semantic-ui-react';
-import { observer } from 'mobx-react-lite';
-import ActivityStore from '../../../app/stores/activityStore';
-import { RouteComponentProps } from 'react-router-dom';
-import LoadingComponent from '../../../app/layout/LoadingComponent';
-import ActivityDetailedHeader from './ActivityDetailedHeader';
-import ActivityDetailedInfo from './ActivityDetailedInfo';
-import ActivityDetailedChat from './ActivityDetailedChat';
-import ActivityDetailedSidebar from './ActivityDetailedSidebar';
+import React, { useContext, useEffect } from "react";
+import { Grid } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
+import ActivityStore from "../../../app/stores/activityStore";
+import { RouteComponentProps } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import ActivityDetailedHeader from "./ActivityDetailedHeader";
+import ActivityDetailedInfo from "./ActivityDetailedInfo";
+import ActivityDetailedChat from "./ActivityDetailedChat";
+import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
 
 interface DetailParams {
   id: string;
 }
 
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
-  match
+  match,
+  history
 }) => {
   const activityStore = useContext(ActivityStore);
   const { activity, loadingInitial, loadActivity } = activityStore;
 
   useEffect(() => {
-    loadActivity(match.params.id);
-  }, [loadActivity, match, match.params.id]);
+    loadActivity(match.params.id).catch(() => {
+      history.push("/notfound");
+    });
+  }, [loadActivity, match, match.params.id, history]);
 
   if (loadingInitial || !activity)
-    return <LoadingComponent content='Loading activity...' />;
+    return <LoadingComponent content="Loading activity..." />;
+
+  if (!activity) {
+    return <h2>Activity not Found</h2>;
+  }
 
   return (
     <Grid>

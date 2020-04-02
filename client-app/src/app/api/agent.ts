@@ -1,7 +1,13 @@
-import axios, { AxiosResponse } from 'axios';
-import { IActivity } from '../models/activity';
+import axios, { AxiosResponse } from "axios";
+import { IActivity } from "../models/activity";
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = "http://localhost:5000/api";
+
+axios.interceptors.response.use(undefined, error => {
+  if (error.response.status === 404) {
+    throw error.response;
+  }
+});
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -34,9 +40,9 @@ const response = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => response.get('/activities'),
+  list: (): Promise<IActivity[]> => response.get("/activities"),
   details: (id: string) => response.get(`/activities/${id}`),
-  create: (activity: IActivity) => response.post('/activities', activity),
+  create: (activity: IActivity) => response.post("/activities", activity),
   update: (activity: IActivity) =>
     response.put(`/activities/${activity.id}`, activity),
   delete: (id: string) => response.delete(`/activities/${id}`)
